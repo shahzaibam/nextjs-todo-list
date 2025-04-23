@@ -12,20 +12,20 @@ const LandingPage = () => {
 
     function addTodo(e) {
         e.preventDefault();
-        console.log(task)
-        setTaskList([...taskList, task]);
-        setTask('')
+        if (task.trim() === "") return;
+
+        const newTask = { id: Date.now(), text: task };
+
+        setTaskList([...taskList, newTask]);
+        setTask('');
     }
 
-    function taskDone(e, index) {
+    function taskDone(e, taskId) {
 
         if (e.target.checked) {
-            let taskFinished = taskList[index]
-            setCompletedTask([...completedTask, taskFinished])
-
-            const newList = taskList.filter((_, i) => i !== index);
-
-            setTaskList(newList)
+            const taskFinished = taskList.find(task => task.id === taskId);
+            setCompletedTask([...completedTask, taskFinished]);
+            setTaskList(taskList.filter(task => task.id !== taskId));
         }
 
     }
@@ -48,17 +48,16 @@ const LandingPage = () => {
 
                 <div className='w-1/2 mx-auto mt-5'>
                     <ul className=''>
-                        {taskList.map((item, index) => {
-                            return <div key={index} className='flex justify-between items-center p-2'>
+                        {taskList.map((item) => {
+                            return <div key={item.id} className='flex justify-between items-center p-2'>
                                 <div>
-                                    <li className='text-none' key={index}>
-                                        {item}
-
+                                    <li className='text-none'>
+                                        {item.text}
                                     </li>
                                 </div>
 
                                 <div className='flex gap-5'>
-                                    <input type='checkbox' className='px-5' onChange={(e) => taskDone(e, index)} />
+                                    <input type='checkbox' className='px-5' onChange={(e) => taskDone(e, item.id)} />
                                     <span className='cursor-pointer'>
                                         <FaTrash />
                                     </span>
@@ -67,10 +66,21 @@ const LandingPage = () => {
                         })}
 
 
-                        {completedTask.map((item, index) => {
-                            return <li className='line-through' key={index}>
-                                {item}
-                            </li>
+                        {completedTask.map((item) => {
+                            return <div key={item.id} className='flex justify-between items-center p-2'>
+                                <div>
+                                    <li className='text-none line-through'>
+                                        {item.text}
+
+                                    </li>
+                                </div>
+
+                                <div className='flex gap-5'>
+                                    <span className='cursor-pointer'>
+                                        <FaTrash />
+                                    </span>
+                                </div>
+                            </div>
                         })}
                     </ul>
                 </div>
