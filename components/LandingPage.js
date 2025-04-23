@@ -1,104 +1,120 @@
 import React, { useState } from 'react'
 import Navbar from '@/components/Navbar'
-import { FaTrash } from "react-icons/fa";
-import { motion, AnimatePresence } from 'framer-motion';
-
+import { FaTrash } from "react-icons/fa"
+import { motion, AnimatePresence } from 'framer-motion'
 
 const LandingPage = () => {
-
     const [taskList, setTaskList] = useState([])
     const [completedTask, setCompletedTask] = useState([])
     const [task, setTask] = useState('')
 
-
     function addTodo(e) {
-        e.preventDefault();
-        if (task.trim() === "") return;
+        e.preventDefault()
+        if (task.trim() === '') return
 
-        const newTask = { id: Date.now(), text: task };
-
-        setTaskList([...taskList, newTask]);
-        setTask('');
+        const newTask = { id: Date.now(), text: task }
+        setTaskList([...taskList, newTask])
+        setTask('')
     }
 
     function taskDone(e, taskId) {
-
         if (e.target.checked) {
-            const taskFinished = taskList.find(task => task.id === taskId);
-            setCompletedTask([...completedTask, taskFinished]);
-            setTaskList(taskList.filter(task => task.id !== taskId));
+            const taskFinished = taskList.find(task => task.id === taskId)
+            setCompletedTask([...completedTask, taskFinished])
+            setTaskList(taskList.filter(task => task.id !== taskId))
+        }
+    }
+
+    function deletePendingTask(taskId) {
+        if (taskId) {
+
+            const taskToDelete = taskList.filter(task => task.id !== taskId);
+            setTaskList(taskToDelete);
+
+
+        }
+    }
+
+
+    function deleteCompletedTask(taskId) {
+
+        if (taskId) {
+            const taskToDelete = completedTask.filter(task => task.id !== taskId);
+            setCompletedTask(taskToDelete);
         }
 
     }
 
     return (
-        <div className='bg-[#f1f1f1] w-full h-screen text-black'>
+        <div className="bg-[#f1f1f1] min-h-screen text-black">
             <Navbar />
 
-            <div className='w-1/2 py-20 px-20 mx-auto'>
+            <div className="w-full max-w-3xl mx-auto py-20 px-6">
+                <h1 className="text-center text-5xl md:text-7xl uppercase font-bold tracking-tighter leading-tight mb-16">
+                    My To Do List
+                </h1>
 
-                <h1 className='text-center text-2xl font-semibold tracking-tighter leading-tight mb-5'>My To Do List</h1>
+                <form onSubmit={addTodo} className="flex justify-center gap-4 mb-10 flex-wrap">
+                    <input type="text" className="border border-gray-300 rounded-full px-6 py-3 w-full sm:w-2/3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+                        placeholder="What do you need to do?" onChange={(e) => setTask(e.target.value)} value={task} />
 
-                <div className='text-center'>
-                    <form>
-                        <input type='text' className='border-[1px] rounded-full p-[.3vw]' onChange={(e) => setTask(e.target.value)} value={task} />
-                        <input type='submit' value="Add" className='border-[1px] ml-4 text-xl p-2 rounded-2xl' onClick={(e) => addTodo(e)} />
-                    </form>
-                </div>
+                    <button type="submit" className="bg-blue-600 text-white px-6 py-3 rounded-full text-xl hover:bg-blue-700 transition-all">
+                        Add
+                    </button>
+                </form>
 
 
-                <div className='w-1/2 mx-auto mt-5'>
-                    <ul className=''>
-                        <AnimatePresence>
-                            {taskList.map((item) => (
-                                <div key={item.id} className='flex justify-between items-center p-2'>
-                                    <motion.li
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                        className='text-none'
-                                    >
-                                        {item.text}
-                                    </motion.li>
+                {/* PENDING TASKS */}
+                <div className="space-y-10">
+                    <div>
+                        <h2 className="text-2xl font-semibold mb-4">Pending Tasks</h2>
+                        <ul className="space-y-4">
+                            {/* <AnimatePresence> */}
+                            {taskList.length > 0 ? (
+                                taskList.map((item) => (
+                                    <li key={item.id} className="flex justify-between items-center bg-white shadow rounded-xl px-6 py-4">
+                                        <span className="text-lg">{item.text}</span>
+                                        <div className="flex gap-4 items-center">
+                                            <input
+                                                type="checkbox"
+                                                onChange={(e) => taskDone(e, item.id)}
+                                                className="h-5 w-5 cursor-pointer"
+                                            />
+                                            <span onClick={() => deletePendingTask(item.id)} className="cursor-pointer text-red-500 hover:text-red-700 transition-colors">
+                                                <FaTrash />
+                                            </span>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="text-gray-500 text-lg italic">
+                                    Start adding your to-dos ✨
+                                </li>
+                            )}
+                            {/* </AnimatePresence> */}
+                        </ul>
+                    </div>
 
-                                    <motion.div className='flex gap-5'>
-                                        <input
-                                            type='checkbox'
-                                            onChange={(e) => taskDone(e, item.id)}
-                                        />
-                                        <span className='cursor-pointer'>
+
+
+                    {/* COMPLETED TASKS */}
+                    {completedTask.length > 0 && (
+                        <div >
+                            <h2 className="text-2xl font-semibold mb-4">Completed Tasks</h2>
+                            <ul className="space-y-4">
+                                {completedTask.map((item) => (
+                                    <li key={item.id} className="flex justify-between items-center bg-green-100 text-green-800 px-6 py-4 rounded-xl line-through" >
+                                        <span className="text-lg">{item.text}</span>
+                                        <span onClick={() => deleteCompletedTask(item.id)} className="cursor-pointer text-green-600 hover:text-green-800 transition-colors">
                                             <FaTrash />
                                         </span>
-                                    </motion.div>
-                                </div>
-                            ))}
-                        </AnimatePresence>
-
-
-                        {completedTask.map((item) => {
-                            return <div key={item.id} className='flex justify-between items-center p-2'>
-                                <div>
-                                    <li className='text-none line-through'>
-                                        {item.text}
-
                                     </li>
-                                </div>
-
-                                <div className='flex gap-5'>
-                                    <span className='cursor-pointer'>
-                                        <FaTrash />
-                                    </span>
-                                </div>
-                            </div>
-                        })}
-                    </ul>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
-
-
             </div>
-
-
         </div>
     )
 }
