@@ -9,7 +9,7 @@ const Navbar = () => {
 
             <div>
                 <div>
-                    <ul className='flex gap-5'>
+                    <ul className='flex gap-[3vw]'>
                         {["Home", "About Us", "Pricing", "Opportunities"].map((item, index) => {
                             return <li className='cursor-pointer hover:text-amber-900' key={index}>
                                 {item}
