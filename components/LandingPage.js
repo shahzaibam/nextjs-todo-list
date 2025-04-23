@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Navbar from '@/components/Navbar'
 import { FaTrash } from "react-icons/fa";
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 const LandingPage = () => {
@@ -48,22 +49,31 @@ const LandingPage = () => {
 
                 <div className='w-1/2 mx-auto mt-5'>
                     <ul className=''>
-                        {taskList.map((item) => {
-                            return <div key={item.id} className='flex justify-between items-center p-2'>
-                                <div>
-                                    <li className='text-none'>
+                        <AnimatePresence>
+                            {taskList.map((item) => (
+                                <div key={item.id} className='flex justify-between items-center p-2'>
+                                    <motion.li
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 20 }}
+                                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                        className='text-none'
+                                    >
                                         {item.text}
-                                    </li>
-                                </div>
+                                    </motion.li>
 
-                                <div className='flex gap-5'>
-                                    <input type='checkbox' className='px-5' onChange={(e) => taskDone(e, item.id)} />
-                                    <span className='cursor-pointer'>
-                                        <FaTrash />
-                                    </span>
+                                    <motion.div className='flex gap-5'>
+                                        <input
+                                            type='checkbox'
+                                            onChange={(e) => taskDone(e, item.id)}
+                                        />
+                                        <span className='cursor-pointer'>
+                                            <FaTrash />
+                                        </span>
+                                    </motion.div>
                                 </div>
-                            </div>
-                        })}
+                            ))}
+                        </AnimatePresence>
 
 
                         {completedTask.map((item) => {
