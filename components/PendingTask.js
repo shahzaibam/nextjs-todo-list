@@ -1,11 +1,17 @@
 import React from 'react'
-import { FaTrash } from "react-icons/fa"
+import TrashIconButton from './TrashIconButton';
 
 
 
 const PendingTask = ({ taskList, setTaskList, setCompletedTask, completedTask }) => {
 
 
+    function deletePendingTask(taskId) {
+        if (taskId) {
+            const taskToDelete = taskList.filter(task => task.id !== taskId);
+            setTaskList(taskToDelete);
+        }
+    }
 
     function taskDone(e, taskId) {
         if (e.target.checked) {
@@ -18,7 +24,6 @@ const PendingTask = ({ taskList, setTaskList, setCompletedTask, completedTask })
     return (
         <>
 
-            {/* <AnimatePresence> */}
             {
                 taskList.length > 0 ? (
                     taskList.map((item) => (
@@ -31,7 +36,7 @@ const PendingTask = ({ taskList, setTaskList, setCompletedTask, completedTask })
                                     className="h-5 w-5 cursor-pointer"
                                 />
                                 <span onClick={() => deletePendingTask(item.id)} className="cursor-pointer text-red-500 hover:text-red-700 transition-colors">
-                                    <FaTrash />
+                                    <TrashIconButton />
                                 </span>
                             </div>
                         </li>
@@ -43,7 +48,6 @@ const PendingTask = ({ taskList, setTaskList, setCompletedTask, completedTask })
 
                 )
             }
-            {/* </AnimatePresence> */}
         </>
 
     )
